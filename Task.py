@@ -9,16 +9,19 @@ root.resizable(False,False)
 
 
 task_list= []
+def show():
+    lb=Label(root,text="Hello"+ entry_name.get(),  font=("Cndara",10))
+    lb.place(x=230,y=120)
 
 def addTask():
     task = task_entry.get()
-    task_entry.delete(0,END)
+    task_entry.delete(0, END)
 
     if task:
-       with open("tasklist.txt",'a') as taskfil:
-           taskfil.write(f"\n{task}")
-       task_list.append(task)
-       listbox.insert(END,task)
+        with open("/Users/nez_1/Music/pro/mytasks.txt", 'a') as taskfile:
+            taskfile.write(f"\n{task}")
+        task_list.append(task)
+        listbox.insert( END, task)
 
 
 def deleteTask():
@@ -26,27 +29,25 @@ def deleteTask():
     task = str(listbox.get(ANCHOR))
     if task in task_list:
         task_list.remove(task)
-        with open("tasklist.txt", 'w') as taskfile:
+        with open("/Users/nez_1/Music/pro/mytasks.txt", 'w') as taskfie:
             for task in task_list:
-                taskfile.write(task+"\n")
-        listbox.delete(ANCHOR)
-
+                taskfie.write(task + "\n")
+        listbox.delete( ANCHOR)
 
 
 def openTaskFile():
     try:
-        global  task_list
-        with open("tasklist.txt", "r") as taskfile:
+        global task_list
+        with open("/Users/nez_1/Music/pro/mytasks.txt", "r") as taskfile:
             tasks = taskfile.readlines()
 
-        for task in tasks :
+        for task in tasks:
             if task !='\n':
-                task_list.append()
-                listbox.insert(END , task)
+                task_list.append(task)
+                listbox.insert(END, task)
     except:
-        file = open('tasklist.txt','w')
+        file = open("/Users/nez_1/Music/pro/mytasks.txt", 'w')
         file.close()
-
 #icon
 Image_icon = PhotoImage(file="C:\\Users\\nez_1\\Music\\pro\\task.png")
 root.iconphoto(False,Image_icon)
@@ -63,6 +64,15 @@ Label(root,image=noteImage,bg="#32405b").place( x=340 , y=25)
 
 heading = Label(root,text="ALL TASK",font="arial 20 bold", fg="white", bg="#32405b")
 heading.place(x=120, y=20)
+
+name = Label(root,text="Enter Your Name:",font="arial 10 bold", fg="white", bg="#32405b")
+name.place(x=20, y=90)
+entry_name= Entry(root ,font=("Candara",13))
+entry_name.insert(0,"  ")
+entry_name.place(x=20,y=120)
+
+b_submit = Button(root, text="SUBMIT",command=show,font="arial 10 bold", fg="white", bg="#32405b")
+b_submit.place(x=20,y=150)
 
 #main
 frame =Frame(root,width=400,height=50,bg="white")
@@ -97,4 +107,5 @@ Button(root, image=Delete_icon, bd=0, command=deleteTask) .pack(side=BOTTOM, pad
 
 
 root.mainloop()
+
 
