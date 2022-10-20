@@ -1,65 +1,82 @@
 
+import mysql.connector
 import tkinter
 from tkinter import *
+
+#connect to the database
+mydb = mysql.connector.connect(host="localhost", user="root", passwd="1234", database="users_db")
+mycursor = mydb.cursor()
+mycursor.execute("select * from usersName")
 
 root = Tk()
 root.title("TO-DO-LIST")
 root.geometry("400x650+400+100")
 root.resizable(False,False)
 
+all = mycursor.fetchall()
+print(all)
 
 task_list= []
+
 def show():
-    lb=Label(root,text="Hello"+ entry_name.get(),  font=("Cndara",10))
-    lb.place(x=230,y=120)
+    dataName = entry_name.get()
+    if (dataName,) in all:
+        lb1 = Label(root, text="Hello again " + entry_name.get(), font=("Cndara", 10))
+        lb1.place(x=230, y=120)
+    else:
+        sql = "insert into usersName (name) values (%s)"
+        yy = [entry_name.get()]
+        mycursor.execute(sql, yy)
+        mydb.commit()
+        lb = Label(root, text="Welcome " + entry_name.get(), font=("Cndara", 10))
+        lb.place(x=230, y=120)
 
 def addTask():
     task = task_entry.get()
-    task_entry.delete(0, END)
+    task_entry.delete(0,END)
 
     if task:
-        with open("/Users/nez_1/Music/pro/mytasks.txt", 'a') as taskfile:
-            taskfile.write(f"\n{task}")
-        task_list.append(task)
-        listbox.insert( END, task)
-
+       with open("tasklist.txt",'a') as taskfil:
+           taskfil.write(f"\n{task}")
+       task_list.append(task)
+       listbox.insert(END,task)
 
 def deleteTask():
     global task_list
     task = str(listbox.get(ANCHOR))
     if task in task_list:
         task_list.remove(task)
-        with open("/Users/nez_1/Music/pro/mytasks.txt", 'w') as taskfie:
+        with open("tasklist.txt", 'w') as taskfile:
             for task in task_list:
-                taskfie.write(task + "\n")
-        listbox.delete( ANCHOR)
-
+                taskfile.write(task+"\n")
+        listbox.delete(ANCHOR)
 
 def openTaskFile():
     try:
-        global task_list
-        with open("/Users/nez_1/Music/pro/mytasks.txt", "r") as taskfile:
+        global  task_list
+        with open("tasklist.txt", "r") as taskfile:
             tasks = taskfile.readlines()
 
-        for task in tasks:
+        for task in tasks :
             if task !='\n':
-                task_list.append(task)
-                listbox.insert(END, task)
+                task_list.append()
+                listbox.insert(END , task)
     except:
-        file = open("/Users/nez_1/Music/pro/mytasks.txt", 'w')
+        file = open('tasklist.txt','w')
         file.close()
+
 #icon
-Image_icon = PhotoImage(file="C:\\Users\\nez_1\\Music\\pro\\task.png")
+Image_icon = PhotoImage(file="C:\\Users\\Z3tr\\Desktop\\prog\\task.png")
 root.iconphoto(False,Image_icon)
 
 #top bar
-TopImage = PhotoImage(file="C:\\Users\\nez_1\\Music\\pro\\topbar.png")
+TopImage = PhotoImage(file="C:\\Users\\Z3tr\\Desktop\\prog\\topbar.png")
 Label(root,image=TopImage).pack()
 
-dockImage =PhotoImage(file="C:\\Users\\nez_1\\Music\\pro\\dock.png")
+dockImage =PhotoImage(file="C:\\Users\\Z3tr\\Desktop\\prog\\dock.png")
 Label(root,image=dockImage,bg="#32405b").place( x=30 , y=25)
 
-noteImage = PhotoImage(file="C:\\Users\\nez_1\\Music\\pro\\task.png")
+noteImage = PhotoImage(file="C:\\Users\\Z3tr\\Desktop\\prog\\task.png")
 Label(root,image=noteImage,bg="#32405b").place( x=340 , y=25)
 
 heading = Label(root,text="ALL TASK",font="arial 20 bold", fg="white", bg="#32405b")
@@ -67,8 +84,7 @@ heading.place(x=120, y=20)
 
 name = Label(root,text="Enter Your Name:",font="arial 10 bold", fg="white", bg="#32405b")
 name.place(x=20, y=90)
-entry_name= Entry(root ,font=("Candara",13))
-entry_name.insert(0,"  ")
+entry_name= Entry(root, font=("Candara",13))
 entry_name.place(x=20,y=120)
 
 b_submit = Button(root, text="SUBMIT",command=show,font="arial 10 bold", fg="white", bg="#32405b")
@@ -101,11 +117,7 @@ scrollbar.config(command=listbox.yview)
 openTaskFile()
 
 #delete
-Delete_icon = PhotoImage(file="C:\\Users\\nez_1\\Music\\pro\\delete.png")
+Delete_icon = PhotoImage(file="C:\\Users\\Z3tr\\Desktop\\prog\\delete.png")
 Button(root, image=Delete_icon, bd=0, command=deleteTask) .pack(side=BOTTOM, pady=13)
 
-
-
 root.mainloop()
-
-
